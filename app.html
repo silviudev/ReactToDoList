@@ -15,7 +15,7 @@
 	<div id="main">
 		<script type="text/babel">
 
-			//ListItem component that contains
+			//ListItem component that contains the actual list item and edit/delete buttons
 			class ListItem extends React.Component{
 				constructor(props) {
 			    super(props);
@@ -42,6 +42,7 @@
 					this.props.updateItem(value, this.props.index);
 				}
 
+				//render the editing form for editing mode
 				renderEditForm(){
 					return(
 						<div className="itemContainer">
@@ -51,6 +52,7 @@
 					)
 				}
 
+				//render the standard view of the list item
 				renderStandardView(){
 					return (
 						<div className="itemContainer">
