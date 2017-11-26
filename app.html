@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>React To Do List</title>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" type="text/css" href="stylesheets/main.css">
+	<script src="lib/react.js"></script>
+	<script src="lib/react-dom.js"></script>
+	<script src="lib/babel.min.js"></script>
+</head>
+
+
+<body>
+	<div id="main">
+		<script type="text/babel">
+
+			//ListItem component that contains
+			class ListItem extends React.Component{
+				constructor(props) {
+			    super(props);
+					this.state = {
+						editMode: false
+					};
+
+					this.edit = this.edit.bind(this);
+					this.delete = this.delete.bind(this);
+					this.save = this.save.bind(this);
+			  }
+
+				edit(){
+					this.setState({editMode:true});
+				}
+
+				delete(){
+					this.props.deleteItem(this.props.index);
+				}
+
+				save(){
+					this.setState({editMode: false});
+					var value = this.refs.newContent.value;
+					this.props.updateItem(value, this.props.index);
+				}
+
+				renderEditForm(){
+					return(
+						<div className="itemContainer">
+							<textarea ref="newContent" defaultValue={this.props.children}></textarea>
+							<button onClick={this.save}>Save</button>
+						</div>
+					)
+				}
+
+				renderStandardView(){
+					return (
+						<div className="itemContainer">
+							<p>{this.props.children}</p>
+							<button onClick={this.edit}>Edit</button>
+							<button onClick={this.delete}>Delete</button>
+						</div>
+					)
+				}
+
+				render(){
+					if(this.state.editMode){
+						return this.renderEditForm();
+					}else{
+						return this.renderStandardView();
+					}
+				}
+		  }//end listItem component
+
+			//ListContainer component that contains all the to-do list items
+			class ListContainer extends React.Component{
+				constructor(props){
+					super(props);
+					this.state = {
+						listItems: [
+							"Order Pizza",
+							"Take out the trash",
+							"Go shopping"
+						]
+					}
+
+					this.createListItem = this.createListItem.bind(this);
+					this.removeListItem = this.removeListItem.bind(this);
+					this.updateListItem = this.updateListItem.bind(this);
+					this.addListItem = this.addListItem.bind(this);
+				}
+
+				createListItem(item, i){
+					return <ListItem key={i} index={i} updateItem={this.updateListItem} deleteItem={this.removeListItem}>{item}</ListItem>
+				}
+
+				addListItem(){
+					var text = this.refs.newInput.value;
+					var itemArray = this.state.listItems;
+					itemArray.push(text);
+					this.setState({listItems : itemArray});
+				}
+
+				removeListItem(i){
+					console.log("Removing comment " + i);
+					var itemArray = this.state.listItems;
+					itemArray.splice(i,1);
+					this.setState({listItems : itemArray});
+				}
+
+				updateListItem(newContent, i){
+					var itemArray = this.state.listItems;
+					itemArray[i] = newContent;
+					this.setState({listItems : itemArray});
+				}
+
+				render(){
+					return (
+						<div>
+						{
+							this.state.listItems.map(this.createListItem)
+						}
+						<input type="text" ref="newInput" defaultValue="Content goes here"/>
+						<button onClick={this.addListItem}>Add New</button>
+						</div>
+					)
+				}
+			}//end listcontainer component
+
+			ReactDOM.render(
+				<ListContainer />,
+				document.getElementById("main"));
+		</script>
+	</div>
+</body>
+
+
+</html>
